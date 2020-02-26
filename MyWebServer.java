@@ -14,10 +14,12 @@ class MyWebServer{
                 Socket connectionSocket = welcomeSocket.accept();
                 BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream())); 
                 DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-                String test = inFromClient.readLine();
-                outToClient.writeBytes(test);
+                inFromClient.readLine();
+                inFromClient.readLine();
+                String test1 = inFromClient.readLine();
+                outToClient.writeBytes(test1);
                 connectionSocket.close();
-                System.out.println("It works!");
+                System.out.println(test1);
             }
         } catch (IOException e){
             System.out.println(e);
