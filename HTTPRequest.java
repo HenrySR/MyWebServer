@@ -39,8 +39,8 @@ class HTTPRequest{
                 }
             }
             path = path.substring(startIndex);
-            path = rPath + path + "index.html";
         }
+        path = rPath + path + "index.html";
     }
 
     private void validateCommand(){
