@@ -17,11 +17,11 @@ class MyWebServer{
                 DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
                 StringBuffer input = new StringBuffer();
                 String currLine = inFromClient.readLine();
-                while(!currLine.equals("\n")){
+                while(!currLine.isEmpty()){
                     input.append(currLine);
                     input.append(" ");
                     currLine = inFromClient.readLine();
-                    System.out.println(input.toString());
+                    System.out.println(currLine);
                 }
                 System.out.println("Left loop");
                 HTTPRequest request = new HTTPRequest(input.toString(), fileDir);
