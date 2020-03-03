@@ -21,11 +21,9 @@ class MyWebServer{
                     input.append(currLine);
                     input.append(" ");
                     currLine = inFromClient.readLine();
-                    System.out.println(currLine);
                 }
-                System.out.println("Left loop");
                 HTTPRequest request = new HTTPRequest(input.toString(), fileDir);
-                outToClient.writeBytes(fileDir);
+                outToClient.writeBytes(request.getStatus());
                 connectionSocket.close();
             }
         } catch (IOException e){
