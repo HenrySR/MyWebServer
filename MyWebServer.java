@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*; 
+import java.util.ArrayList;
 
 class MyWebServer{
     public static void main(String[] args){
@@ -14,12 +15,18 @@ class MyWebServer{
                 Socket connectionSocket = welcomeSocket.accept();
                 BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream())); 
                 DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-                inFromClient.readLine();
-                inFromClient.readLine();
-                String test1 = inFromClient.readLine();
-                outToClient.writeBytes(test1);
+                StringBuffer input = new StringBuffer();
+                String currLine = inFromClient.readLine();
+                while(!currLine.equals("\n")){
+                    input.append(currLine);
+                    input.append(" ");
+                    currLine = inFromClient.readLine();
+                    System.out.println(input.toString());
+                }
+                System.out.println("Left loop");
+                HTTPRequest request = new HTTPRequest(input.toString(), fileDir);
+                outToClient.writeBytes(fileDir);
                 connectionSocket.close();
-                System.out.println(test1);
             }
         } catch (IOException e){
             System.out.println(e);
