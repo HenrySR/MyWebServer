@@ -8,24 +8,34 @@ class HTTPRequest{
     private String path;
     private String status;
     private Date ifModifiedSince;
-
-    private String[] tokens;
-    
     
     public HTTPRequest(String request, String rootPath){
         System.out.println(request);
         rPath = rootPath;
-        tokens = tokenize(request);
+        String[] tokens = tokenize(request);
         command = tokens[0];
         path = tokens[1];
-        String date = findModifiedDate();
+        String date = findModifiedDate(tokens);
         status = "200 OK";
         checkForBadRequest(date);
+        makePath();
         System.out.println(command + " " + path + " " + ifModifiedSince);
     }
 
     public String getStatus(){
         return status;
+    }
+
+    public String getPath(){
+        return path;
+    }
+
+    public String getCommand(){
+        return command;
+    }
+
+    public Date getDate(){
+        return ifModifiedSince;
     }
 
     private void makePath(){
@@ -67,10 +77,15 @@ class HTTPRequest{
         }
     }
 
-    private String findModifiedDate(){
+    private String findModifiedDate(String[] tokens){
         for(int i = 0; i < tokens.length; i++){
             if(tokens[i].equals("If-Modified-Since:")){
-                return tokens[i + 1];
+                // next 6 tokens will be under date header
+                String date = "";
+                for(int j = i + 1; j < i + 7; j++){
+                    date = date + tokens[j] + " ";
+                }
+                return date;
             }
         }
         return "";
