@@ -22,7 +22,8 @@ class MyWebServer{
                     currLine = inFromClient.readLine();
                 }
                 HTTPRequest request = new HTTPRequest(input.toString(), fileDir);
-                outToClient.writeBytes(request.getStatus());
+                HTTPResponse response = new HTTPResponse(request.getStatus(), request.getPath(), request.getCommand(), request.getIfModifiedSince());
+                outToClient.writeBytes(response.getResponse());
                 connectionSocket.close();
             }
         } catch (IOException e){

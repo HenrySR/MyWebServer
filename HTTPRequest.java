@@ -34,7 +34,7 @@ class HTTPRequest{
         return command;
     }
 
-    public Date getDate(){
+    public Date getIfModifiedSince(){
         return ifModifiedSince;
     }
 

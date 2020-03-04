@@ -1,67 +1,113 @@
 import java.util.Date;
-import java.io.File;
+import java.io.*;
 
 class HTTPResponse{
-    private String response;
     private String server;
+    private String command;
     private Date date;
     private String status;
-    private String command;
     private String path;
     private File file;
 
-    public HTTPResponse(String status, String command, String path) {
-        server = "";
+    public HTTPResponse(String status, String path, String command, Date ifModifiedSince) {
+        server = "Best Server Ever 1.0";
         this.status = status;
-        this.command = command;
         this.path = path;
+        this.command = command;
+        date = ifModifiedSince;
+    }
+
+    public String getResponse(){
+        if(command.equals("HEAD")){
+            return responseHEAD();
+        } else if (command.equals("GET")){
+            return responseGET();
+        } else {
+            status = "501 Not Implemented";
+            return responseGET();
+        }
     }
     
-    public String responseGET(){
-        response = status + "/r/n" + date + "/r/n" + server + "/r/n" + file.length() + "/r/n" + path + "/r/n"; 
+    private String responseGET(){
+        setFile(path);
+        if(!status.equals("404 Not Found")){
+            checkValidDate();
+        }
+        setErrorFile();
+        String response ="HTTP/1.1 " + status + "/r/n" + "Date: " + date + "/r/n" + "Server: " + server + 
+        "/r/n" + "Content-Length: " + file.getTotalSpace() + "/r/n" + fileToString(); 
 
         return response;
     }
-    public String responseHEAD(){
-        response = status + "/r/n" + date + "/r/n" + server + "/r/n" + file.length() + "/r/n" + path + "/r/n"; 
+    private String responseHEAD(){
+        setFile(path);
+        if(!status.equals("404 Not Found")){
+            checkValidDate();
+        }
+        setErrorFile();
+        String response ="HTTP/1.1 " + status + "/r/n" + "Date: " + date + "/r/n" + "Server: " + server + 
+        "/r/n" + "Content-Length: " + file.getTotalSpace() + "/r/n"; 
 
         return response;
     }
 
-    private void setFile(){
+    private void setFile(String path){
         try {
             file = new File(path);
+            checkFile();
         } catch (NullPointerException e) {
             status = "404 Not Found";
-            setErrorFile();
-            setFile();
+            setFile(this.path + "404error.html");
         }
     }
 
     private void checkFile(){
         if(!file.exists() || !file.isFile()) {
             status = "404 Not Found";
-        }
+            setFile(path + "404error.html");
+            }
     }
 
     private void checkValidDate(){
-
+        Date lastModified = new Date(file.lastModified());
+        if (lastModified.before(date)){
+            status = "304 Not Modified";
+        }
     }
 
     private void setErrorFile(){
         if(status.equals("200 OK")){
-            path = path + "index.html";
+            setFile(path + "index.html");
         } else if (status.equals("304 Not Modified")){
-            path = path + "304error.html";
+           setFile(path + "304error.html");
         } else if (status.equals("400 Bad Request")){
-            path = path + "400error.html";
-        } else if (status.equals("404 Not Found")){
-            path = path + "404error.html";
+            setFile(path + "400error.html");
         } else {
-            path = path + "501error.html";
+            setFile(path + "501error.html");
         } 
-        setFile();
     }
+
+    private String fileToString(){
+        try{
+            BufferedReader buff = new BufferedReader(new FileReader(file));
+            StringBuffer input = new StringBuffer();
+            String currLine = buff.readLine();
+            while(!currLine.isEmpty()){
+                input.append(currLine);
+                input.append("\n");
+                currLine = buff.readLine();
+            }
+            buff.close();
+            return input.toString();
+        } catch (FileNotFoundException e){
+            System.out.println(e);
+            return "";
+        } catch (IOException e){
+            System.out.println(e);
+            return "";
+        }  
+    }
+
 
 
     
