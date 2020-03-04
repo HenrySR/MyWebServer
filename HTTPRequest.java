@@ -50,7 +50,7 @@ class HTTPRequest{
             }
             path = path.substring(startIndex);
         }
-        path = rPath + path + "index.html";
+        path = rPath + path;
     }
 
     private void validateCommand(){
