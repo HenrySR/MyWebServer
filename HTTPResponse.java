@@ -1,5 +1,7 @@
 import java.util.Date;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 class HTTPResponse{
     private String server;
@@ -31,8 +33,15 @@ class HTTPResponse{
         }
     }
     
-    public File getFile(){
-        return file;
+    public byte[] getFile(){
+        try {
+            byte[] fileData = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
+        return fileData;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
+        
     }
 
     private String responseGET(){       
@@ -107,7 +116,7 @@ class HTTPResponse{
             BufferedReader buff = new BufferedReader(new FileReader(file));
             StringBuffer input = new StringBuffer();
             String currLine = buff.readLine();
-            //String currLine = Files.readAllLines(path);
+            
             while(!currLine.isEmpty()){
                 System.out.println(currLine);
                 input.append(currLine);
