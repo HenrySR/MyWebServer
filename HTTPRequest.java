@@ -54,7 +54,7 @@ class HTTPRequest{
     }
 
     private void validateCommand(){
-        if(!command.equals("GET") || !command.equals("HEAD")){
+        if(!command.equals("GET") && !command.equals("HEAD")){
             status = "501 Not Implemented";
         }       
     }

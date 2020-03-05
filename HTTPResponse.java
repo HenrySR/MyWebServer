@@ -8,16 +8,19 @@ class HTTPResponse{
     private String status;
     private String path;
     private File file;
+    private Date ifModifiedSince;
 
     public HTTPResponse(String status, String path, String command, Date ifModifiedSince) {
         server = "Best Server Ever 1.0";
         this.status = status;
         this.path = path;
         this.command = command;
-        date = ifModifiedSince;
+        this.ifModifiedSince = ifModifiedSince;
+        date = new Date();
     }
 
     public String getResponse(){
+        
         if(command.equals("HEAD")){
             return responseHEAD();
         } else if (command.equals("GET")){
@@ -28,19 +31,25 @@ class HTTPResponse{
         }
     }
     
-    private String responseGET(){
+    public File getFile(){
+        return file;
+    }
+
+    private String responseGET(){       
         setFile(path);
-        if(!status.equals("404 Not Found")){
+        checkFile();
+        
+        if(!(ifModifiedSince == null )){
             checkValidDate();
         }
         setErrorFile();
         String response ="HTTP/1.1 " + status + "/r/n" + "Date: " + date + "/r/n" + "Server: " + server + 
         "/r/n" + "Content-Length: " + file.getTotalSpace() + "/r/n" + fileToString(); 
-
         return response;
     }
     private String responseHEAD(){
         setFile(path);
+        checkFile();
         if(!status.equals("404 Not Found")){
             checkValidDate();
         }
@@ -54,7 +63,6 @@ class HTTPResponse{
     private void setFile(String path){
         try {
             file = new File(path);
-            checkFile();
         } catch (NullPointerException e) {
             status = "404 Not Found";
             setFile(this.path + "404error.html");
@@ -62,8 +70,9 @@ class HTTPResponse{
     }
 
     private void checkFile(){
-        if(!file.exists() || !file.isFile()) {
+        if(!file.exists()) {
             status = "404 Not Found";
+            
             setFile(path + "404error.html");
             }
     }
@@ -76,15 +85,21 @@ class HTTPResponse{
     }
 
     private void setErrorFile(){
+        checkFile(); 
         if(status.equals("200 OK")){
             setFile(path + "index.html");
         } else if (status.equals("304 Not Modified")){
            setFile(path + "304error.html");
         } else if (status.equals("400 Bad Request")){
             setFile(path + "400error.html");
-        } else {
+        }
+        else if (status.equals("404 Not Found")){
+            return;
+        }
+        else {
             setFile(path + "501error.html");
-        } 
+        }
+        
     }
 
     private String fileToString(){
@@ -92,10 +107,13 @@ class HTTPResponse{
             BufferedReader buff = new BufferedReader(new FileReader(file));
             StringBuffer input = new StringBuffer();
             String currLine = buff.readLine();
+            //String currLine = Files.readAllLines(path);
             while(!currLine.isEmpty()){
+                System.out.println(currLine);
                 input.append(currLine);
                 input.append("\n");
                 currLine = buff.readLine();
+                
             }
             buff.close();
             return input.toString();
@@ -106,6 +124,9 @@ class HTTPResponse{
             System.out.println(e);
             return "";
         }  
+        catch (NullPointerException e){
+            System.out.println(e);
+            return "";}
     }
 
 
