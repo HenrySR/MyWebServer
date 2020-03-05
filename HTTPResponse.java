@@ -9,13 +9,15 @@ class HTTPResponse{
     private Date date;
     private String status;
     private String path;
+    private String rPath;
     private File file;
     private Date ifModifiedSince;
 
-    public HTTPResponse(String status, String path, String command, Date ifModifiedSince) {
+    public HTTPResponse(String status, String path, String command, Date ifModifiedSince, String rootPath) {
         server = "Best Server Ever 1.0";
         this.status = status;
         this.path = path;
+        rPath = rootPath;
         this.command = command;
         this.ifModifiedSince = ifModifiedSince;
         date = new Date();
@@ -76,7 +78,7 @@ class HTTPResponse{
             file = new File(path);
         } catch (NullPointerException e) {
             status = "404 Not Found";
-            setFile(this.path + "404error.html");
+            setFile(rPath + "/404error.html");
         }
     }
 
@@ -84,7 +86,7 @@ class HTTPResponse{
         if(!file.exists()) {
             status = "404 Not Found";
             
-            setFile(path + "404error.html");
+            setFile(rPath + "/404error.html");
             }
     }
 
@@ -101,15 +103,15 @@ class HTTPResponse{
             if(path.endsWith("/")){
             setFile(path + "index.html");}
         } else if (status.equals("304 Not Modified")){
-           setFile(path + "304error.html");
+           setFile(rPath + "/304error.html");
         } else if (status.equals("400 Bad Request")){
-            setFile(path + "400error.html");
+            setFile(rPath + "/400error.html");
         }
         else if (status.equals("404 Not Found")){
             return;
         }
         else {
-            setFile(path + "501error.html");
+            setFile(rPath + "/501error.html");
         }
         
     }

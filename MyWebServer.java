@@ -22,7 +22,7 @@ class MyWebServer{
                     currLine = inFromClient.readLine();
                 }
                 HTTPRequest request = new HTTPRequest(input.toString(), fileDir);
-                HTTPResponse response = new HTTPResponse(request.getStatus(), request.getPath(), request.getCommand(), request.getIfModifiedSince());
+                HTTPResponse response = new HTTPResponse(request.getStatus(), request.getPath(), request.getCommand(), request.getIfModifiedSince(), request.getRootPath());
                 System.out.println(response.getResponse());
                 outToClient.writeBytes(response.getResponse());
                 outToClient.write(response.getFile());

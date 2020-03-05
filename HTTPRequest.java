@@ -30,6 +30,10 @@ class HTTPRequest{
         return path;
     }
 
+    public String getRootPath(){
+        return rPath;
+    }
+
     public String getCommand(){
         return command;
     }
