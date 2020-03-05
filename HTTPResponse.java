@@ -52,8 +52,9 @@ class HTTPResponse{
             checkValidDate();
         }
         setErrorFile();
+        //String curDate = Date.toString(date);
         String response ="HTTP/1.1 " + status + "/r/n" + "Date: " + date + "/r/n" + "Server: " + server + 
-        "/r/n" + "Content-Length: " + file.getTotalSpace() + "/r/n" + fileToString(); 
+        "/r/n" + "Content-Length: " + file.getTotalSpace() + "/r/n"; 
         return response;
     }
     private String responseHEAD(){
@@ -96,7 +97,8 @@ class HTTPResponse{
     private void setErrorFile(){
         checkFile(); 
         if(status.equals("200 OK")){
-            setFile(path + "index.html");
+            if(path.endsWith("/")){
+            setFile(path + "index.html");}
         } else if (status.equals("304 Not Modified")){
            setFile(path + "304error.html");
         } else if (status.equals("400 Bad Request")){

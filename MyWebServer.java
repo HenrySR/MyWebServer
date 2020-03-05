@@ -23,6 +23,7 @@ class MyWebServer{
                 }
                 HTTPRequest request = new HTTPRequest(input.toString(), fileDir);
                 HTTPResponse response = new HTTPResponse(request.getStatus(), request.getPath(), request.getCommand(), request.getIfModifiedSince());
+                System.out.println(response.getResponse());
                 outToClient.writeBytes(response.getResponse());
                 outToClient.write(response.getFile());
                 connectionSocket.close();

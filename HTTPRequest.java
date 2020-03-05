@@ -19,7 +19,7 @@ class HTTPRequest{
         status = "200 OK";
         checkForBadRequest(date);
         makePath();
-        System.out.println(command + " " + path + " " + ifModifiedSince);
+        //System.out.println(command + " " + path + " " + ifModifiedSince);
     }
 
     public String getStatus(){
