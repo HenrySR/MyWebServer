@@ -35,6 +35,7 @@ class HTTPResponse{
     
     public byte[] getFile(){
         try {
+            System.out.println(file.getAbsolutePath());
             byte[] fileData = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
         return fileData;
         } catch (Exception e) {
