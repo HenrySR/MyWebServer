@@ -65,8 +65,8 @@ class HTTPResponse{
         }
         setErrorFile();
         //String curDate = Date.toString(date);
-        String response ="HTTP/1.1 " + status + "\r\n" + "Date: " + date + "\r\n" + "Server: " + server + 
-        "\r\n" + "Content-Length: " + getFileSize() + "\r\n"; 
+        String response ="HTTP/1.1 " + status + "/r/n" + "Date: " + date + "/r/n" + "Server: " + server + 
+        "/r/n" + "Content-Length: " + getFileSize() + "/r/n"; 
         System.out.println("In responseGET: "+response);
         return response;
     }
@@ -77,8 +77,8 @@ class HTTPResponse{
             checkValidDate();
         }
         setErrorFile();
-        String response ="HTTP/1.1 " + status + "\r\n" + "Date: " + date + "\r\n" + "Server: " + server + 
-        "\r\n" + "Content-Length: " + getFileSize() + "\r\n"; 
+        String response ="HTTP/1.1 " + status + "/r/n" + "Date: " + date + "/r/n" + "Server: " + server + 
+        "/r/n" + "Content-Length: " + getFileSize() + "/r/n"; 
 
         return response;
     }
