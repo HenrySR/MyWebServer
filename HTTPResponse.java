@@ -39,36 +39,46 @@ class HTTPResponse{
         try {
             System.out.println(file.getAbsolutePath());
             byte[] fileData = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
-        return fileData;
-        } catch (Exception e) {
+            System.out.println("file length: " + fileData.length);
+            return fileData;
+        } catch (IOException e) {
             System.out.println(e);
             return null;
         }
         
     }
 
+    private long getFileSize(){
+        try{
+            return Files.size(Paths.get(file.getAbsolutePath()));
+        } catch (IOException e){
+            System.out.println(e);
+            return -1;
+        }
+    }
+
     private String responseGET(){       
         setFile(path);
         checkFile();
-        
-        if(!(ifModifiedSince == null )){
+        if(ifModifiedSince != null){
             checkValidDate();
         }
         setErrorFile();
         //String curDate = Date.toString(date);
-        String response ="HTTP/1.1 " + status + "/r/n" + "Date: " + date + "/r/n" + "Server: " + server + 
-        "/r/n" + "Content-Length: " + file.getTotalSpace() + "/r/n"; 
+        String response ="HTTP/1.1 " + status + "\r\n" + "Date: " + date + "\r\n" + "Server: " + server + 
+        "\r\n" + "Content-Length: " + getFileSize() + "\r\n"; 
+        System.out.println("In responseGET: "+response);
         return response;
     }
     private String responseHEAD(){
         setFile(path);
         checkFile();
-        if(!status.equals("404 Not Found")){
+        if(ifModifiedSince != null){
             checkValidDate();
         }
         setErrorFile();
-        String response ="HTTP/1.1 " + status + "/r/n" + "Date: " + date + "/r/n" + "Server: " + server + 
-        "/r/n" + "Content-Length: " + file.getTotalSpace() + "/r/n"; 
+        String response ="HTTP/1.1 " + status + "\r\n" + "Date: " + date + "\r\n" + "Server: " + server + 
+        "\r\n" + "Content-Length: " + getFileSize() + "\r\n"; 
 
         return response;
     }
@@ -84,10 +94,9 @@ class HTTPResponse{
 
     private void checkFile(){
         if(!file.exists()) {
-            status = "404 Not Found";
-            
+            status = "404 Not Found";    
             setFile(rPath + "/404error.html");
-            }
+        }
     }
 
     private void checkValidDate(){
@@ -101,7 +110,8 @@ class HTTPResponse{
         checkFile(); 
         if(status.equals("200 OK")){
             if(path.endsWith("/")){
-            setFile(path + "index.html");}
+                setFile(path + "index.html");
+            }
         } else if (status.equals("304 Not Modified")){
            setFile(rPath + "/304error.html");
         } else if (status.equals("400 Bad Request")){
@@ -112,38 +122,6 @@ class HTTPResponse{
         }
         else {
             setFile(rPath + "/501error.html");
-        }
-        
+        }   
     }
-
-    private String fileToString(){
-        try{
-            BufferedReader buff = new BufferedReader(new FileReader(file));
-            StringBuffer input = new StringBuffer();
-            String currLine = buff.readLine();
-            
-            while(!currLine.isEmpty()){
-                System.out.println(currLine);
-                input.append(currLine);
-                input.append("\n");
-                currLine = buff.readLine();
-                
-            }
-            buff.close();
-            return input.toString();
-        } catch (FileNotFoundException e){
-            System.out.println(e);
-            return "";
-        } catch (IOException e){
-            System.out.println(e);
-            return "";
-        }  
-        catch (NullPointerException e){
-            System.out.println(e);
-            return "";}
-    }
-
-
-
-    
 }

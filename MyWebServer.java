@@ -16,16 +16,22 @@ class MyWebServer{
                 DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
                 StringBuffer input = new StringBuffer();
                 String currLine = inFromClient.readLine();
-                while(!currLine.isEmpty()){
-                    input.append(currLine);
-                    input.append(" ");
-                    currLine = inFromClient.readLine();
+                if(currLine != null){
+                    while(!currLine.isEmpty()){
+                        input.append(currLine);
+                        input.append(" ");
+                        currLine = inFromClient.readLine();
+                    }
+                    HTTPRequest request = new HTTPRequest(input.toString(), fileDir);
+                    HTTPResponse response = new HTTPResponse(request.getStatus(), request.getPath(), request.getCommand(), request.getIfModifiedSince(), request.getRootPath());
+                    System.out.println("In main: "+response.getResponse());
+                    outToClient.write(response.getResponse().getBytes());
+                    if(request.getCommand().equals("GET")){ 
+                        byte[] test = response.getFile();
+                        System.out.println("main length after: "+test.length);
+                        outToClient.write(test);
+                    }
                 }
-                HTTPRequest request = new HTTPRequest(input.toString(), fileDir);
-                HTTPResponse response = new HTTPResponse(request.getStatus(), request.getPath(), request.getCommand(), request.getIfModifiedSince(), request.getRootPath());
-                System.out.println(response.getResponse());
-                outToClient.writeBytes(response.getResponse());
-                outToClient.write(response.getFile());
                 connectionSocket.close();
             }
         } catch (IOException e){
