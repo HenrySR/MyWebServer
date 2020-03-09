@@ -2,6 +2,7 @@ import java.util.Date;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 
 class HTTPResponse{
     private String server;
@@ -57,16 +58,18 @@ class HTTPResponse{
         }
     }
 
-    private String responseGET(){       
+    private String responseGET(){         
         setFile(path);
         checkFile();
         if(ifModifiedSince != null){
             checkValidDate();
         }
         setErrorFile();
+        
+         Date lastModified = new Date(file.lastModified());
         //String curDate = Date.toString(date);
         String response ="HTTP/1.1 " + status + "/r/n" + "Date: " + date + "/r/n" + "Server: " + server + 
-        "/r/n" + "Content-Length: " + getFileSize() + "/r/n"; 
+        "/r/n" + "Last-Modified: " +  lastModified + "/r/n" + "Content-Length: " + getFileSize() + "/r/n"; 
         System.out.println("In responseGET: "+response);
         return response;
     }
@@ -124,4 +127,5 @@ class HTTPResponse{
             setFile(rPath + "/501error.html");
         }   
     }
+
 }
