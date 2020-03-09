@@ -24,12 +24,13 @@ class MyWebServer{
                     }
                     HTTPRequest request = new HTTPRequest(input.toString(), fileDir);
                     HTTPResponse response = new HTTPResponse(request.getStatus(), request.getPath(), request.getCommand(), request.getIfModifiedSince(), request.getRootPath());
-                    System.out.println("In main: "+response.getResponse());
-                    outToClient.write(response.getResponse().getBytes());
+                    outToClient.writeBytes(response.getResponse());
+                    System.out.println("HEADER Bytes written: " + outToClient.size());
                     if(request.getCommand().equals("GET")){ 
                         byte[] test = response.getFile();
                         System.out.println("main length after: "+test.length);
                         outToClient.write(test);
+                        System.out.println("TOTAL Bytes written: " + outToClient.size());
                     }
                 }
                 connectionSocket.close();
