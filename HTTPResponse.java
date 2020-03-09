@@ -80,8 +80,9 @@ class HTTPResponse{
             checkValidDate();
         }
         setErrorFile();
+        Date lastModified = new Date(file.lastModified());
         String response ="HTTP/1.1 " + status + "/r/n" + "Date: " + date + "/r/n" + "Server: " + server + 
-        "/r/n" + "Content-Length: " + getFileSize() + "/r/n"; 
+        "/r/n" + "Last-Modified: " +  lastModified + "/r/n" + "Content-Length: " + getFileSize() + "/r/n"; 
 
         return response;
     }
