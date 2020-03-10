@@ -7,6 +7,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat; 
 
 class MyWebServer{
+    // takes port number and path from root directory and starts then runs the server. 
+    // reads in the HTTP request line by line, constructs HTTPRequest and HTTPResponse 
+    // to process tokens, then writes out the response header and file to port
+    // RETURN nothing
+    // CATCH IOException if file reading/writing fails
     public static void main(String[] args){
         int port = Integer.parseInt(args[0]);
         String fileDir = args[1];
@@ -187,8 +192,11 @@ class HTTPRequest{
     private String status;
     private Date ifModifiedSince;
     
+    // Tokenizes HTTP request, creates the complete path, 
+    // sets basic response status and formats if-modified-since date
+    // Checks for 400 and 501 errors
+    // RETURN nothing
     public HTTPRequest(String request, String rootPath){
-        System.out.println(request);
         rPath = rootPath;
         String[] tokens = tokenize(request);
         command = tokens[0];
@@ -197,29 +205,37 @@ class HTTPRequest{
         status = "200 OK";
         checkForBadRequest(date);
         makePath();
-        //System.out.println(command + " " + path + " " + ifModifiedSince);
     }
 
+    // RETURN response status
     public String getStatus(){
         return status;
     }
 
+    // RETURN complete path
     public String getPath(){
         return path;
     }
 
+    // RETURN root path given at server start-up time
     public String getRootPath(){
         return rPath;
     }
 
+    // RETURN HTTP request command
     public String getCommand(){
         return command;
     }
 
+    // RETURN date that file must be younger than 
+    // according to the request, null if not specified
     public Date getIfModifiedSince(){
         return ifModifiedSince;
     }
 
+    // removes unneccessary elements from request path, if present
+    // appends the path given in HTTP request to the root path
+    // RETURN nothing
     private void makePath(){
         if(path.charAt(0) == 'h'){
             int slashCounter = 0;
@@ -235,12 +251,18 @@ class HTTPRequest{
         path = rPath + path;
     }
 
+    // sets status to 501 if the request type isn't GET or HEAD
+    // RETURN nothing
     private void validateCommand(){
         if(!command.equals("GET") && !command.equals("HEAD")){
             status = "501 Not Implemented";
         }       
     }
 
+    // General method for checking if Request is valid by checking if command is valid and 
+    // if the date is readable according to the standard HTTP date format.
+    // Sets status to 400 if date is not parseable 
+    // RETURN nothing
     private void checkForBadRequest(String date){
         validateCommand();
         if(path.charAt(0) != '/'){
@@ -259,6 +281,10 @@ class HTTPRequest{
         }
     }
 
+    // reads through tokens to find If-Modified-Since date, 
+    // then combines the next 6 tokens into a string to be converted 
+    // to a date object in checkForBadRequest
+    // RETURN String containing date tokens if If-Modified-Since is included in request, else ""
     private String findModifiedDate(String[] tokens){
         for(int i = 0; i < tokens.length; i++){
             if(tokens[i].equals("If-Modified-Since:")){
@@ -273,6 +299,8 @@ class HTTPRequest{
         return "";
     }
 
+    // splits string into String[] by space
+    // RETURN array of string tokens from HTTP Request
     private String[] tokenize(String request){
         String[] toReturn = request.split(" ");
         return toReturn;
