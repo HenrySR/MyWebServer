@@ -249,7 +249,7 @@ class HTTPRequest{
         }
         if(!date.isEmpty()){
             try{
-                ifModifiedSince = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z").parse(date);
+                ifModifiedSince = new SimpleDateFormat("EEE dd MMM yyyy HH:mm:ss z").parse(date);
             } catch (ParseException e){
                 status = "400 Bad Request";
                 return;
